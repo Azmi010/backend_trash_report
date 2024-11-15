@@ -9,4 +9,5 @@ type User struct {
 	CreatedAt string
 	UpdatedAt string
 	Token     string
+	Reports   []Report
 }

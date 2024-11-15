@@ -7,6 +7,7 @@ type User struct {
 	Name     string `gorm:"not null"`
 	Email    string
 	Password string
+	Reports  []Report `gorm:"foreignKey:UserID"`
 }
 
 func FromEntities(user entities.User) User {
