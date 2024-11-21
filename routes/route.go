@@ -27,4 +27,5 @@ func (rc RouteController) InitRoute(e *echo.Echo) {
 	eAdmin.GET("/reports", rc.ReportController.GetAllReports)
 	eAdmin.PUT("/reports/:report_id", rc.ReportController.UpdateReportStatus)
 	eAdmin.DELETE("/reports/:report_id", rc.ReportController.DeleteReportByAdmin)
+	eAdmin.POST("/reports/:report_id/analyze", rc.ReportController.AddReportAnalysis)
 }

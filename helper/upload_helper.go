@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net/url"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -33,6 +34,10 @@ func UploadFileToFirebase(file *multipart.FileHeader, bucket *storage.BucketHand
 		return "", fmt.Errorf("unable to get file attributes: %v", err)
 	}
 
-	publicURL := fmt.Sprintf("https://storage.googleapis.com/%s/%s", attrs.Bucket, attrs.Name)
+	publicURL := fmt.Sprintf("https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media&token=%s", 
+		attrs.Bucket, 
+		url.QueryEscape(attrs.Name), 
+		attrs.MediaLink)
+
 	return publicURL, nil
 }

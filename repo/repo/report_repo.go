@@ -1,7 +1,9 @@
 package repo
 
 import (
+	"fmt"
 	"trash_report/entities"
+	"trash_report/helper"
 	"trash_report/repo/record"
 
 	"gorm.io/gorm"
@@ -9,10 +11,14 @@ import (
 
 type ReportRepo struct {
 	db *gorm.DB
+	geminiHelper *helper.GeminiHelper
 }
 
-func NewReportRepo(db *gorm.DB) *ReportRepo {
-	return &ReportRepo{db: db}
+func NewReportRepo(db *gorm.DB, geminiHelper *helper.GeminiHelper) *ReportRepo {
+	return &ReportRepo{
+		db: db,
+		geminiHelper: geminiHelper,
+	}
 }
 
 func (r *ReportRepo) CreateReport(report *entities.Report) error {
@@ -65,4 +71,30 @@ func (r *ReportRepo) UpdateReportStatus(reportID uint, status string) error {
 
 func (r *ReportRepo) DeleteReportByAdmin(reportID uint) error {
 	return r.db.Where("id = ?", reportID).Delete(&entities.Report{}).Error
+}
+
+func (r *ReportRepo) AddReportAnalysis(reportID int) (*entities.ReportAnalysis, error) {
+	var report record.Report
+	if err := r.db.First(&report, "id = ?", reportID).Error; err != nil {
+		return nil, err
+	}
+
+	apiResponse, err := r.geminiHelper.AnalyzeReport(report.Title, report.Description, report.PhotoUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	reportAnalysis := &entities.ReportAnalysis{
+		Status:   "Analyzed",
+		Analysis: fmt.Sprintf("Title: %s", apiResponse.Data.Analysis),
+		ReportID: reportID,
+	}
+
+	analysisRecord := record.ReportAnalysisFromEntity(*reportAnalysis)
+	if err := r.db.Create(&analysisRecord).Error; err != nil {
+		return nil, err
+	}
+
+	reportAnalysis.ID = analysisRecord.ID
+	return reportAnalysis, nil
 }

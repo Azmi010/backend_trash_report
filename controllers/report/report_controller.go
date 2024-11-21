@@ -2,10 +2,11 @@ package report
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 	"trash_report/controllers/base"
 	"trash_report/controllers/report/request"
-	"trash_report/helper"
+	// "trash_report/helper"
 	"trash_report/services/interface"
 
 	"github.com/labstack/echo/v4"
@@ -25,10 +26,10 @@ func (rc *ReportController) CreateReport(c echo.Context) error {
 		return base.ErrorResponse(c, err)
 	}
 
-	location, err := helper.GetAddressFromCoordinates(reportReq.Latitude, reportReq.Longitude)
-	if err != nil {
-		return base.ErrorResponse(c, err)
-	}
+	// location, err := helper.GetAddressFromCoordinates(reportReq.Latitude, reportReq.Longitude)
+	// if err != nil {
+	// 	return base.ErrorResponse(c, err)
+	// }
 
 	file, err := c.FormFile("photo_url")
 	if err != nil {
@@ -36,7 +37,7 @@ func (rc *ReportController) CreateReport(c echo.Context) error {
 	}
 
 	report := reportReq.ToEntities()
-	report.Location = location
+	// report.Location = location
 	
 	if err := rc.reportService.CreateReport(&report, file); err != nil {
 		return base.ErrorResponse(c, err)
@@ -122,4 +123,18 @@ func (rc *ReportController) DeleteReportByAdmin(c echo.Context) error {
 	}
 
 	return base.SuccessResponse(c, "Report deleted by admin successfully")
+}
+
+func (rc *ReportController) AddReportAnalysis(c echo.Context) error {
+	reportID, err := strconv.Atoi(c.Param("report_id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"message": "Invalid report ID"})
+	}
+
+	analysis, err := rc.reportService.AddReportAnalysis(reportID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": "Failed to analyze report"})
+	}
+
+	return c.JSON(http.StatusOK, analysis)
 }

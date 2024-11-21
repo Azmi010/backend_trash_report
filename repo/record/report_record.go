@@ -5,14 +5,15 @@ import (
 )
 
 type Report struct {
-	ID           int `gorm:"primaryKey"`
-	Title        string
-	Description  string
-	Location     string
-	Status       string
-	PointsEarned int
-	PhotoUrl     string
-	UserID       int `json:"user_id" gorm:"index"`
+	ID             int `gorm:"primaryKey"`
+	Title          string
+	Description    string
+	Location       string
+	Status         string
+	PointsEarned   int
+	PhotoUrl       string
+	UserID         int            `json:"user_id" gorm:"index"`
+	ReportAnalysis ReportAnalysis `gorm:"foreignKey:ReportID"`
 }
 
 func (r *Report) ToEntity() entities.Report {
