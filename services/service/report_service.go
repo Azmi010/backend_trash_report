@@ -44,3 +44,7 @@ func (s *reportService) UpdateReportStatus(reportID uint, status string) error {
 func (s *reportService) DeleteReportByAdmin(reportID uint) error {
 	return s.reportRepo.DeleteReportByAdmin(reportID)
 }
+
+func (s *reportService) AddReportAnalysis(reportID int) (*entities.ReportAnalysis, error) {
+	return s.reportRepo.AddReportAnalysis(reportID)
+}

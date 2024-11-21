@@ -12,4 +12,5 @@ type ReportService interface {
 	GetAllReports() ([]entities.Report, error)
 	UpdateReportStatus(reportID uint, status string) error
 	DeleteReportByAdmin(reportID uint) error
+	AddReportAnalysis(reportID int) (*entities.ReportAnalysis, error)
 }

@@ -3,10 +3,11 @@ package request
 import "trash_report/entities"
 
 type ReportRequest struct {
-	Title        string `json:"title" form:"title"`
-	Description  string `json:"description" form:"description"`
-	Latitude     string  `json:"latitude" form:"latitude"`
-	Longitude    string  `json:"longitude" form:"longitude"`
+	Title       string `json:"title" form:"title"`
+	Description string `json:"description" form:"description"`
+	// Latitude     string  `json:"latitude" form:"latitude"`
+	// Longitude    string  `json:"longitude" form:"longitude"`
+	Location     string `json:"location" form:"location"`
 	Status       string `json:"status" form:"status"`
 	PointsEarned int    `json:"points_earned" form:"points_earned"`
 	PhotoUrl     string `json:"photo_url" form:"photo_url"`
